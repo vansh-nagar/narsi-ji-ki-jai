@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import {
   Card,
   CardHeader,
@@ -13,7 +13,7 @@ import { studentsData } from "@/data/students";
 import { useSearchParams } from "next/navigation";
 import { AuctionTimer } from "@/components/ui/skiper-ui/skiper37";
 
-const Page = () => {
+const PageInner = () => {
   const [highestBid, setHighestBid] = useState(0);
   const searchParams = useSearchParams();
   const [userName, setUserName] = useState("");
@@ -217,4 +217,10 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default function Page() {
+  return (
+    <Suspense fallback={null}>
+      <PageInner />
+    </Suspense>
+  );
+}

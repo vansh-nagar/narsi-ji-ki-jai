@@ -1,11 +1,11 @@
 "use client";
 
 import ContactSection from "@/components/contact";
-import React, { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
-const Page = () => {
+const PageInner = () => {
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -21,4 +21,10 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default function Page() {
+  return (
+    <Suspense fallback={null}>
+      <PageInner />
+    </Suspense>
+  );
+}
