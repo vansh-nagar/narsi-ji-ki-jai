@@ -4,6 +4,10 @@ import { motion, MotionValue, useScroll, useTransform } from "framer-motion";
 import Lenis from "@studio-freight/lenis";
 
 import { useEffect, useRef, useState } from "react";
+import { HeroVideoDialog } from "@/components/ui/hero-video-dialog";
+import Image from "next/image";
+import { HoverExpand_001 } from "@/components/ui/skiper-ui/skiper52";
+import Features from "@/components/features-4";
 
 const images = [
   "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762012998/DSC03563_mtatpi.jpg",
@@ -17,12 +21,57 @@ const images = [
   "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762012889/DSC03771_knu2ia.jpg",
   "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762012888/DSC03731_o87ls3.jpg",
   "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762012888/DSC03511_qiwl1m.jpg",
-  "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762012887/DSC03747_jqqxel.jpg",
-  "https://res.cloudinary.com/dum6rd3ye/image/upload/a_-90/v1762014375/DSC03667_1_jnljne.jpg",
-  "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762012888/DSC03511_qiwl1m.jpg",
-  "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762012887/DSC03729_h1dnx3.jpg",
-  
+ 
 
+];
+
+// Using the hover expand component with custom images
+const imagess = [
+  {
+    src: "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762015364/WhatsApp_Image_2025-11-01_at_15.57.59_g2rsqt.jpg",
+    alt: "Description 1",
+    code: "# 01",
+  },
+  {
+    src: "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762017892/WhatsApp_Image_2025-11-01_at_15.58.07_ly4lyx.jpg",
+    alt: "Description 2",
+    code: "# 02",
+  },
+  {
+    src: "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762017937/WhatsApp_Image_2025-11-01_at_15.57.59_fn3yga.jpg",
+    alt: "Description 3",
+    code: "# 03",
+  },
+  {
+    src: "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762017938/WhatsApp_Image_2025-11-01_at_15.58.01_grdz5q.jpg",
+    alt: "Description 4",
+    code: "# 04",
+  },
+  {
+    src: "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762017939/WhatsApp_Image_2025-11-01_at_15.58.00_k021kf.jpg",
+    alt: "Description 5",
+    code: "# 05",
+  },
+  {
+    src: "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762017939/WhatsApp_Image_2025-11-01_at_15.58.00_1_kyzmfu.jpg",
+    alt: "Description 6",
+    code: "# 06",
+  },
+  {
+    src: "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762017940/WhatsApp_Image_2025-11-01_at_15.57.58_1_ckrhxo.jpg",
+    alt: "Description 7",
+    code: "# 07",
+  },
+  {
+    src: "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762017940/WhatsApp_Image_2025-11-01_at_15.57.58_ujryh1.jpg",
+    alt: "Description 8",
+    code: "# 08",
+  },
+  {
+    src: "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762017940/WhatsApp_Image_2025-11-01_at_15.57.57_ixvqm4.jpg",
+    alt: "Description 9",
+    code: "# 09",
+  },
 ];
 
 const Skiper30 = () => {
@@ -64,9 +113,8 @@ const Skiper30 = () => {
   return (
     <main className="w-full bg-background ">
       <div className="font-geist flex h-screen items-center justify-center gap-2 relative">
-        <div className="absolute left-1/2 top-[10%] grid -translate-x-1/2 content-start justify-items-center gap-6 text-center ">
-          <div>Auction Start</div>
-        </div>
+          <Features />
+    
       </div>
 
       <div
@@ -78,10 +126,9 @@ const Skiper30 = () => {
         <Column images={[images[6], images[7], images[8]]} y={y3} />
         <Column images={[images[6], images[7], images[8]]} y={y4} />
       </div>
-      <div className="font-geist relative flex h-screen items-center justify-center gap-2">
-        <div className="absolute left-1/2 top-[10%] grid -translate-x-1/2 content-start justify-items-center gap-6 text-center ">
-          <div>Auction End</div>
-        </div>
+      <div className="font-geist relative flex  flex-col h-screen items-center justify-center gap-2">
+        <div className="text-3xl font-bold mb-4">Teams</div>
+         <HoverExpand_001 images={imagess} className="" />
       </div>
     </main>
   );

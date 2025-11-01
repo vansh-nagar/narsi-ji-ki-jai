@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Card,
   CardHeader,
@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { studentsData } from "@/data/students";
 import { useSearchParams } from "next/navigation";
+import { AuctionTimer } from "@/components/ui/skiper-ui/skiper37";
 
 const Page = () => {
   const [highestBid, setHighestBid] = useState(0);
@@ -22,6 +23,7 @@ const Page = () => {
   const [currentStudent, setCurrentStudent] = useState(studentsData[0]);
   const [timeLeft, setTimeLeft] = useState(10); // Server-driven
   const [purchases, setPurchases] = useState<{ student: any; amount: number }[]>([]);
+  const prevStudentIdRef = useRef<string | number | undefined>(studentsData[0]?.roll_no);
 
   // Initialize username from query/localStorage
   useEffect(() => {
@@ -52,7 +54,14 @@ const Page = () => {
 
     const data = await res.json();
     if (data.success) {
-      setHighestBid(newBid);
+      // If server switched to a new student (sold), reset price and history
+      if (data.currentStudent && data.currentStudent.roll_no !== prevStudentIdRef.current) {
+        setBidHistory([]);
+        setHighestBid(0);
+        prevStudentIdRef.current = data.currentStudent.roll_no;
+      } else {
+        setHighestBid(newBid);
+      }
       setBidHistory(Array.isArray(data.bids) ? data.bids : []);
       if (typeof data.timer === "number") setTimeLeft(data.timer);
       if (data.currentStudent) setCurrentStudent(data.currentStudent);
@@ -65,6 +74,12 @@ const Page = () => {
       const q = userName ? `?user=${encodeURIComponent(userName)}` : "";
       const res = await fetch(`/api/bid${q}`);
       const data = await res.json();
+      // Detect student change from server
+      if (data.currentStudent && data.currentStudent.roll_no !== prevStudentIdRef.current) {
+        setBidHistory([]);
+        setHighestBid(0);
+        prevStudentIdRef.current = data.currentStudent.roll_no;
+      }
       const bids = Array.isArray(data.bids) ? data.bids : [];
       setBidHistory(bids);
       if (bids.length > 0) setHighestBid(bids[0].amount);
@@ -132,11 +147,16 @@ const Page = () => {
       {/* ✅ Auction Section */}
       <Card className="rounded-none w-md flex flex-col justify-between z-50">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">Auction Bidding</CardTitle>
-          <p className="text-sm text-red-500 font-semibold">
-            Time Left: {timeLeft}s
-          </p>
-        </CardHeader>
+        <CardTitle className="text-2xl font-bold">Auction Bidding</CardTitle>
+        <div className="mt-2">
+          <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Time Left</div>
+          <AuctionTimer
+            value={timeLeft}
+            suffix="s"
+            className={`text-5xl ${timeLeft < 3 ? "text-red-500" : ""}`}
+          />
+        </div>
+      </CardHeader>
 
         <CardContent className="space-y-6">
           <div>
@@ -190,9 +210,7 @@ const Page = () => {
               </div>
             </div>
           )}
-          <Button className="mt-4 w-full" onClick={nextStudent}>
-            🎯 Next Random Student
-          </Button>
+       
         </CardFooter>
       </Card>
     </div>

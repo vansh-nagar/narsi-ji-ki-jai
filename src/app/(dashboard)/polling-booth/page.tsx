@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { ArrowDown, ArrowUp } from "lucide-react";
+import { ElementInternals } from "@/components/etheral-shadow";
 
 type PollOption = {
   id: string;
@@ -48,6 +49,7 @@ export default function PollingBoothPage() {
   const [votedOption, setVotedOption] = useState<string | null>(null);
   const prevRanksRef = useRef<Record<string, number>>({});
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const votedKey = useMemo(() => (poll ? `bob.poll.voted:${poll.id}` : null), [poll]);
 
@@ -129,6 +131,7 @@ export default function PollingBoothPage() {
       toast("You have already voted today.");
       return;
     }
+    setSubmitting(true);
     try {
       const fp = getFingerprint();
       const res = await fetch(`/api/polls/${poll.id}/vote`, {
@@ -159,6 +162,8 @@ export default function PollingBoothPage() {
       }
     } catch (e) {
       toast.error("Network error. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -177,13 +182,21 @@ export default function PollingBoothPage() {
 
   return (
     <div className="w-full min-h-[80vh] flex items-start justify-center py-10">
+      {submitting && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center">
+          <div className="flex flex-col items-center gap-3 rounded-lg bg-white dark:bg-neutral-900 p-6 shadow-lg">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-300 border-t-transparent" />
+            <div className="text-sm font-medium">Processing your vote…</div>
+          </div>
+        </div>
+      )}
       <div className="w-full max-w-3xl px-4">
         <Card>
           <CardHeader>
             <CardTitle className=" text-2xl">Polling Booth</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            {loading && <div>Loading poll…</div>}
+            {loading && <div className=" animate-pulse">Loading poll…</div>}
             {!loading && !poll && (
               <div className="space-y-3">
                 <div>{loadError ?? "No active poll. Be the first to vote when it opens!"}</div>
@@ -227,6 +240,7 @@ export default function PollingBoothPage() {
                   {poll.options.map((opt) => (
                     <Card key={opt.id}>
                       <CardHeader>
+                        <img  className="h-20 w-20 rounded-full object-cover" src="https://res.cloudinary.com/dum6rd3ye/image/upload/v1762015364/WhatsApp_Image_2025-11-01_at_15.57.59_g2rsqt.jpg" alt="" />
                         <CardTitle className="text-base">{opt.teamName ?? opt.text}</CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-2">
@@ -235,7 +249,7 @@ export default function PollingBoothPage() {
                           <div className="text-sm text-muted-foreground">“{opt.tagline}”</div>
                         )}
                         <div className="pt-2">
-                          <Button className="w-full" onClick={() => handleVote(opt.id)}>
+                          <Button className="w-full" disabled={submitting} onClick={() => handleVote(opt.id)}>
                             Vote for {opt.teamName ?? opt.text}
                           </Button>
                         </div>
@@ -279,3 +293,4 @@ export default function PollingBoothPage() {
     </div>
   );
 }
+
