@@ -4,11 +4,12 @@ import { motion, MotionValue, useScroll, useTransform } from "framer-motion";
 import Lenis from "@studio-freight/lenis";
 
 import { useEffect, useRef, useState } from "react";
-import { HeroVideoDialog } from "@/components/ui/hero-video-dialog";
-import Image from "next/image";
-import { HoverExpand_001 } from "@/components/ui/skiper-ui/skiper52";
-import Features from "@/components/features-4";
 
+// Cloudinary optimization: insert f_auto,q_auto after /upload/
+const cloudinaryOpt = (url: string) =>
+  typeof url === "string"
+    ? url.replace("/upload/", "/upload/f_auto,q_auto/")
+    : url;
 const images = [
   "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762012998/DSC03563_mtatpi.jpg",
   "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762012895/DSC03828_d79ocl.jpg",
@@ -25,54 +26,9 @@ const images = [
 
 ];
 
+
 // Using the hover expand component with custom images
-const imagess = [
-  {
-    src: "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762015364/WhatsApp_Image_2025-11-01_at_15.57.59_g2rsqt.jpg",
-    alt: "Description 1",
-    code: "# 01",
-  },
-  {
-    src: "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762017892/WhatsApp_Image_2025-11-01_at_15.58.07_ly4lyx.jpg",
-    alt: "Description 2",
-    code: "# 02",
-  },
-  {
-    src: "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762017937/WhatsApp_Image_2025-11-01_at_15.57.59_fn3yga.jpg",
-    alt: "Description 3",
-    code: "# 03",
-  },
-  {
-    src: "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762017938/WhatsApp_Image_2025-11-01_at_15.58.01_grdz5q.jpg",
-    alt: "Description 4",
-    code: "# 04",
-  },
-  {
-    src: "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762017939/WhatsApp_Image_2025-11-01_at_15.58.00_k021kf.jpg",
-    alt: "Description 5",
-    code: "# 05",
-  },
-  {
-    src: "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762017939/WhatsApp_Image_2025-11-01_at_15.58.00_1_kyzmfu.jpg",
-    alt: "Description 6",
-    code: "# 06",
-  },
-  {
-    src: "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762017940/WhatsApp_Image_2025-11-01_at_15.57.58_1_ckrhxo.jpg",
-    alt: "Description 7",
-    code: "# 07",
-  },
-  {
-    src: "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762017940/WhatsApp_Image_2025-11-01_at_15.57.58_ujryh1.jpg",
-    alt: "Description 8",
-    code: "# 08",
-  },
-  {
-    src: "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762017940/WhatsApp_Image_2025-11-01_at_15.57.57_ixvqm4.jpg",
-    alt: "Description 9",
-    code: "# 09",
-  },
-];
+
 
 const Skiper30 = () => {
   const gallery = useRef<HTMLDivElement>(null);
@@ -112,10 +68,7 @@ const Skiper30 = () => {
 
   return (
     <main className="w-full bg-background ">
-      <div className="font-geist flex h-screen items-center justify-center gap-2 relative">
-          <Features />
-    
-      </div>
+      
 
       <div
         ref={gallery}
@@ -126,10 +79,7 @@ const Skiper30 = () => {
         <Column images={[images[6], images[7], images[8]]} y={y3} />
         <Column images={[images[6], images[7], images[8]]} y={y4} />
       </div>
-      <div className="font-geist relative flex  flex-col h-screen items-center justify-center gap-2">
-        <div className="text-3xl font-bold mb-4">Teams</div>
-         <HoverExpand_001 images={imagess} className="" />
-      </div>
+    
     </main>
   );
 };
@@ -148,7 +98,7 @@ const Column = ({ images, y }: ColumnProps) => {
       {images.map((src, i) => (
         <div key={i} className="relative h-full w-full overflow-hidden">
           <img
-            src={`${src}`}
+            src={`${cloudinaryOpt(src)}`}
             alt="image"
             className="pointer-events-none object-cover h-full w-full"
           />

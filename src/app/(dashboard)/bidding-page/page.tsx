@@ -39,17 +39,16 @@ const PageInner = () => {
     } catch {}
   }, [searchParams]);
 
-  // Place bid
-  const handlePlaceBid = async (amount: number) => {
+  // Place bid (server enforces +50 over current highest)
+  const handlePlaceBid = async () => {
     if (!userName) {
       alert("Please enter your name before bidding!");
       return;
     }
-    const newBid = highestBid + amount;
     const res = await fetch("/api/bid", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: userName, amount: newBid }),
+      body: JSON.stringify({ name: userName }),
     });
 
     const data = await res.json();
@@ -60,7 +59,8 @@ const PageInner = () => {
         setHighestBid(0);
         prevStudentIdRef.current = data.currentStudent.roll_no;
       } else {
-        setHighestBid(newBid);
+        // trust server-authoritative highestBid
+        if (typeof data.highestBid === "number") setHighestBid(data.highestBid);
       }
       setBidHistory(Array.isArray(data.bids) ? data.bids : []);
       if (typeof data.timer === "number") setTimeLeft(data.timer);
@@ -175,7 +175,7 @@ const PageInner = () => {
             <Button
               variant="outline"
               className="w-full"
-              onClick={() => handlePlaceBid(50)}
+              onClick={() => handlePlaceBid()}
             >
               +50 Place Bid
             </Button>

@@ -10,17 +10,17 @@ export default function HeroSection() {
   return (
     <>
       <HeroHeader />
-      <main className="overflow-x-hidden">
+      <main className="relative min-h-screen overflow-hidden">
         <video
           src={"https://dqbr6kzn27lfn.cloudfront.net/loopbg.mp4"}
           autoPlay
           loop
           muted
-          className=" absolute inset-0 mask-b-from-[60%] dark:invert-0 invert  "
+          className="fixed inset-0 h-full w-full object-cover -z-10 dark:invert-0 invert"
         />
-        <section>
-          <div className="pb-24 pt-12 md:pb-32 lg:pb-56 lg:pt-44">
-            <div className="relative mx-auto flex max-w-6xl flex-col px-6 lg:block">
+        <section className="relative">
+          <div className="min-h-screen flex items-center">
+            <div className="relative mx-auto flex w-full max-w-6xl flex-col px-6 lg:block">
               <div className="mx-auto max-w-lg text-center lg:ml-0 lg:w-1/2 lg:text-left">
                 <h1 className="mt-8 max-w-2xl text-balance text-5xl font-medium md:text-6xl lg:mt-16 xl:text-7xl ">
                   Battle of Bytes Auction Event
@@ -51,8 +51,8 @@ export default function HeroSection() {
                 </div>
               </div>
               <Image
-              src={"https://res.cloudinary.com/dolnup1vc/image/upload/v1762018098/IMG_8473_w55ga9.png"}
-                className=" order-first ml-auto h-56 w-full object-cover  sm:h-96 lg:absolute lg:inset-0 lg:-right-32 lg:-top-80 lg:order-last lg:h-max lg:w-2/3"
+                src={"https://res.cloudinary.com/dolnup1vc/image/upload/v1762018098/IMG_8473_w55ga9.png"}
+                className="order-first ml-auto h-56 w-full object-cover sm:h-96 lg:absolute lg:inset-y-0 lg:right-0 lg:my-auto lg:order-last lg:h-[80%] lg:w-1/2"
                 alt="Abstract Object"
                 height="4000"
                 width="3000"

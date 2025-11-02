@@ -24,10 +24,11 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const { name, amount } = await request.json();
-
-  highestBid = amount;
-  bidHistory.unshift({ name, amount }); // Adds newest bid at top
+  const { name } = await request.json();
+  // Enforce: each bid is exactly +50 over current highest (server-authoritative)
+  const nextAmount = highestBid + 50;
+  highestBid = nextAmount;
+  bidHistory.unshift({ name, amount: nextAmount }); // newest bid at top
   auctionTime = 10; // Reset timer after every bid
 
   return Response.json({
