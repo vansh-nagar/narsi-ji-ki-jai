@@ -22,15 +22,21 @@ const PageInner = () => {
   >([]);
   const [currentStudent, setCurrentStudent] = useState(studentsData[0]);
   const [timeLeft, setTimeLeft] = useState(10); // Server-driven
-  const [purchases, setPurchases] = useState<{ student: any; amount: number }[]>([]);
-  const prevStudentIdRef = useRef<string | number | undefined>(studentsData[0]?.roll_no);
+  const [purchases, setPurchases] = useState<
+    { student: any; amount: number }[]
+  >([]);
+  const prevStudentIdRef = useRef<string | number | undefined>(
+    studentsData[0]?.roll_no
+  );
 
   // Initialize username from query/localStorage
   useEffect(() => {
     const fromQuery = searchParams.get("user") ?? "";
     if (fromQuery) {
       setUserName(fromQuery);
-      try { localStorage.setItem("bob.user", fromQuery); } catch {}
+      try {
+        localStorage.setItem("bob.user", fromQuery);
+      } catch {}
       return;
     }
     try {
@@ -54,7 +60,10 @@ const PageInner = () => {
     const data = await res.json();
     if (data.success) {
       // If server switched to a new student (sold), reset price and history
-      if (data.currentStudent && data.currentStudent.roll_no !== prevStudentIdRef.current) {
+      if (
+        data.currentStudent &&
+        data.currentStudent.roll_no !== prevStudentIdRef.current
+      ) {
         setBidHistory([]);
         setHighestBid(0);
         prevStudentIdRef.current = data.currentStudent.roll_no;
@@ -75,7 +84,10 @@ const PageInner = () => {
       const res = await fetch(`/api/bid${q}`);
       const data = await res.json();
       // Detect student change from server
-      if (data.currentStudent && data.currentStudent.roll_no !== prevStudentIdRef.current) {
+      if (
+        data.currentStudent &&
+        data.currentStudent.roll_no !== prevStudentIdRef.current
+      ) {
         setBidHistory([]);
         setHighestBid(0);
         prevStudentIdRef.current = data.currentStudent.roll_no;
@@ -108,26 +120,22 @@ const PageInner = () => {
     <div className="flex w-full h-screen  overflow-hidden">
       {/* ✅ Student Info Section */}
       <div className="flex-1 flex justify-center items-center bg-muted">
-         <video
-        src={"https://dqbr6kzn27lfn.cloudfront.net/loopbg.mp4"}
-        autoPlay
-        loop
-        muted
-        className=" absolute inset-0 mask-b-from-[60%]"
-      />
+        <video
+          src={"https://dqbr6kzn27lfn.cloudfront.net/loopbg.mp4"}
+          autoPlay
+          loop
+          muted
+          className=" absolute inset-0 mask-b-from-[60%]"
+        />
         {currentStudent && (
-          <div className="p-6  rounded-xl w-[80%] z-50">
+          <div className="p-6  rounded-xl w-[80%] z-50  text-white">
             <h2 className="text-2xl font-bold  mb-4">
-            Current Student for Auction
+              Current Student for Auction
             </h2>
-           
-            <p className="text-lg  font-semibold">
-              {currentStudent.name}
-            </p>
+
+            <p className="text-lg  font-semibold">{currentStudent.name}</p>
             <p className=" text-sm">{currentStudent.roll_no}</p>
-            <p className=" text-sm mb-3">
-              {currentStudent.category}
-            </p>
+            <p className=" text-sm mb-3">{currentStudent.category}</p>
 
             <div className="mt-4">
               <p className="font-semibold mb-2 text-2xl"> Skills</p>
@@ -147,16 +155,18 @@ const PageInner = () => {
       {/* ✅ Auction Section */}
       <Card className="rounded-none w-md flex flex-col justify-between z-50">
         <CardHeader>
-        <CardTitle className="text-2xl font-bold">Auction Bidding</CardTitle>
-        <div className="mt-2">
-          <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Time Left</div>
-          <AuctionTimer
-            value={timeLeft}
-            suffix="s"
-            className={`text-5xl ${timeLeft < 3 ? "text-red-500" : ""}`}
-          />
-        </div>
-      </CardHeader>
+          <CardTitle className="text-2xl font-bold">Auction Bidding</CardTitle>
+          <div className="mt-2">
+            <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">
+              Time Left
+            </div>
+            <AuctionTimer
+              value={timeLeft}
+              suffix="s"
+              className={`text-5xl ${timeLeft < 3 ? "text-red-500" : ""}`}
+            />
+          </div>
+        </CardHeader>
 
         <CardContent className="space-y-6">
           <div>
@@ -195,14 +205,18 @@ const PageInner = () => {
         </CardContent>
 
         <CardFooter className="flex flex-col w-full gap-2 items-start">
-         
           {userName && (
             <div className="mt-4 w-full">
               <h4 className="text-md font-semibold mb-2">Your Purchases</h4>
               <div className="flex flex-col gap-2  overflow-y-auto">
-                {purchases.length === 0 && <div className="text-sm">No purchases yet.</div>}
+                {purchases.length === 0 && (
+                  <div className="text-sm">No purchases yet.</div>
+                )}
                 {purchases.map((p, i) => (
-                  <div key={i} className="flex justify-between text-sm border p-2 rounded">
+                  <div
+                    key={i}
+                    className="flex justify-between text-sm border p-2 rounded"
+                  >
                     <span>{p.student?.name ?? "Student"}</span>
                     <span className="font-bold">₹{p.amount}</span>
                   </div>
@@ -210,7 +224,6 @@ const PageInner = () => {
               </div>
             </div>
           )}
-       
         </CardFooter>
       </Card>
     </div>

@@ -51,7 +51,10 @@ export default function PollingBoothPage() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const votedKey = useMemo(() => (poll ? `bob.poll.voted:${poll.id}` : null), [poll]);
+  const votedKey = useMemo(
+    () => (poll ? `bob.poll.voted:${poll.id}` : null),
+    [poll]
+  );
 
   useEffect(() => {
     const load = async () => {
@@ -62,12 +65,18 @@ export default function PollingBoothPage() {
         if (!res.ok || !ct.includes("application/json")) {
           setPoll(null);
           setResults(null);
-          setLoadError("No active poll or server error. You can seed a demo poll.");
+          setLoadError(
+            "No active poll or server error. You can seed a demo poll."
+          );
           return;
         }
         const data = await res.json();
         if (data && data.id) {
-          setPoll({ id: data.id, question: data.question, options: data.options });
+          setPoll({
+            id: data.id,
+            question: data.question,
+            options: data.options,
+          });
           setLoadError(null);
         } else {
           setPoll(null);
@@ -105,7 +114,9 @@ export default function PollingBoothPage() {
         const data: PollResults = await res.json();
         if (!stop && data && Array.isArray(data.options)) {
           // compute ranks and keep previous
-          const sorted = [...data.options].sort((a, b) => (b.votes ?? 0) - (a.votes ?? 0));
+          const sorted = [...data.options].sort(
+            (a, b) => (b.votes ?? 0) - (a.votes ?? 0)
+          );
           const ranks: Record<string, number> = {};
           sorted.forEach((o, idx) => (ranks[o.id] = idx + 1));
           prevRanksRef.current = prevRanksRef.current || {};
@@ -155,7 +166,8 @@ export default function PollingBoothPage() {
         const err = await res.json().catch(() => ({}));
         if (err?.error?.code === "ALREADY_VOTED") {
           toast("You have already voted today.");
-          if (votedKey && !votedOption) localStorage.setItem(votedKey, optionId);
+          if (votedKey && !votedOption)
+            localStorage.setItem(votedKey, optionId);
         } else {
           toast.error("Failed to submit vote. Please try again.");
         }
@@ -180,6 +192,18 @@ export default function PollingBoothPage() {
     return "same" as const;
   };
 
+  const teamImages = [
+    "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762015364/WhatsApp_Image_2025-11-01_at_15.57.59_g2rsqt.jpg",
+    "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762017937/WhatsApp_Image_2025-11-01_at_15.57.59_fn3yga.jpg",
+    "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762017892/WhatsApp_Image_2025-11-01_at_15.58.07_ly4lyx.jpg",
+    "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762017938/WhatsApp_Image_2025-11-01_at_15.58.01_grdz5q.jpg",
+    "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762017939/WhatsApp_Image_2025-11-01_at_15.58.00_k021kf.jpg",
+    "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762017939/WhatsApp_Image_2025-11-01_at_15.58.00_1_kyzmfu.jpg",
+    "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762017940/WhatsApp_Image_2025-11-01_at_15.57.58_1_ckrhxo.jpg",
+    "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762017940/WhatsApp_Image_2025-11-01_at_15.57.58_ujryh1.jpg",
+    "https://res.cloudinary.com/dum6rd3ye/image/upload/v1762017940/WhatsApp_Image_2025-11-01_at_15.57.57_ixvqm4.jpg",
+  ];
+
   return (
     <div className="w-full min-h-[80vh] flex items-start justify-center py-10">
       {submitting && (
@@ -199,12 +223,17 @@ export default function PollingBoothPage() {
             {loading && <div className=" animate-pulse">Loading poll…</div>}
             {!loading && !poll && (
               <div className="space-y-3">
-                <div>{loadError ?? "No active poll. Be the first to vote when it opens!"}</div>
+                <div>
+                  {loadError ??
+                    "No active poll. Be the first to vote when it opens!"}
+                </div>
                 <Button
                   variant="outline"
                   onClick={async () => {
                     try {
-                      const res = await fetch("/api/polls/seed", { method: "POST" });
+                      const res = await fetch("/api/polls/seed", {
+                        method: "POST",
+                      });
                       const ct = res.headers.get("content-type") || "";
                       if (!res.ok || !ct.includes("application/json")) {
                         toast.error("Failed to seed poll.");
@@ -217,7 +246,11 @@ export default function PollingBoothPage() {
                         const a = await fetch("/api/polls/active");
                         const act = await a.json();
                         if (act && act.id) {
-                          setPoll({ id: act.id, question: act.question, options: act.options });
+                          setPoll({
+                            id: act.id,
+                            question: act.question,
+                            options: act.options,
+                          });
                           setLoadError(null);
                         }
                       } else {
@@ -237,19 +270,33 @@ export default function PollingBoothPage() {
               <div className="space-y-4">
                 <div className="text-xl font-semibold">{poll.question}</div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {poll.options.map((opt) => (
+                  {poll.options.map((opt, idx) => (
                     <Card key={opt.id}>
                       <CardHeader>
-                        <img  className="h-20 w-20 rounded-full object-cover" src="https://res.cloudinary.com/dum6rd3ye/image/upload/v1762015364/WhatsApp_Image_2025-11-01_at_15.57.59_g2rsqt.jpg" alt="" />
-                        <CardTitle className="text-base">{opt.teamName ?? opt.text}</CardTitle>
+                        <img
+                          className="h-20 w-20 rounded-full object-cover"
+                          src={teamImages[idx % teamImages.length]}
+                          alt={opt.teamName ?? opt.text}
+                        />
+                        <CardTitle className="text-base">
+                          {opt.teamName ?? opt.text}
+                        </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-2">
-                        {opt.members && <div className="text-sm">{opt.members}</div>}
+                        {opt.members && (
+                          <div className="text-sm">{opt.members}</div>
+                        )}
                         {opt.tagline && (
-                          <div className="text-sm text-muted-foreground">“{opt.tagline}”</div>
+                          <div className="text-sm text-muted-foreground">
+                            “{opt.tagline}”
+                          </div>
                         )}
                         <div className="pt-2">
-                          <Button className="w-full" disabled={submitting} onClick={() => handleVote(opt.id)}>
+                          <Button
+                            className="w-full"
+                            disabled={submitting}
+                            onClick={() => handleVote(opt.id)}
+                          >
                             Vote for {opt.teamName ?? opt.text}
                           </Button>
                         </div>
@@ -269,17 +316,28 @@ export default function PollingBoothPage() {
                     const rank = idx + 1;
                     const trend = trendFor(o.id, rank);
                     return (
-                      <div key={o.id} className="flex items-center justify-between border rounded-md p-3">
+                      <div
+                        key={o.id}
+                        className="flex items-center justify-between border rounded-md p-3"
+                      >
                         <div className="flex items-center gap-3">
-                          <div className="w-6 text-center font-semibold">{rank}</div>
-                          <div className="font-medium">{o.teamName ?? o.text}</div>
+                          <div className="w-6 text-center font-semibold">
+                            {rank}
+                          </div>
+                          <div className="font-medium">
+                            {o.teamName ?? o.text}
+                          </div>
                         </div>
                         <div className="flex items-center gap-3">
                           <div className="text-sm text-muted-foreground">
                             {o.votes ?? 0} votes · {o.percent ?? 0}%
                           </div>
-                          {trend === "up" && <ArrowUp className="text-green-600" size={18} />}
-                          {trend === "down" && <ArrowDown className="text-red-600" size={18} />}
+                          {trend === "up" && (
+                            <ArrowUp className="text-green-600" size={18} />
+                          )}
+                          {trend === "down" && (
+                            <ArrowDown className="text-red-600" size={18} />
+                          )}
                         </div>
                       </div>
                     );
@@ -293,4 +351,3 @@ export default function PollingBoothPage() {
     </div>
   );
 }
-
